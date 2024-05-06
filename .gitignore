@@ -1,0 +1,10 @@
+/.vscode
+/assets
+/components
+/out
+/source
+/Temp
+/manifest
+
+/scripts/dist
+/node_modules

@@ -1,0 +1,36 @@
+{
+  "name": "vovah",
+  "version": "1.0.0",
+  "scripts": {
+    "build:DEMOT2": "tsc && node scripts/dist/build.js --zip --env DEMOT2",
+    "build:DTCTENANT3": "tsc && node scripts/dist/build.js --zip --env DTCTENANT3",
+    "build:DTCTENANT4": "tsc && node scripts/dist/build.js --zip --env DTCTENANT4",
+    "build:DTVPRODA": "tsc && node scripts/dist/build.js --zip --env DTVPRODA",
+    "build:DU": "tsc && node scripts/dist/build.js --zip --env DU",
+    "build:ORDMDV": "tsc && node scripts/dist/build.js --zip --env ORDMDV",
+    "build:ORDOMN": "tsc && node scripts/dist/build.js --zip --env ORDOMN",
+    "build:SKT": "tsc && node scripts/dist/build.js --zip --env SKT",
+    "build:SPORTS": "tsc && node scripts/dist/build.js --zip --env SPORTS",
+    "build:TGN": "tsc && node scripts/dist/build.js --zip --env TGN",
+    "build:TMO": "tsc && node scripts/dist/build.js --zip --env TMO",
+    "build:TMOUMC": "tsc && node scripts/dist/build.js --zip --env TMOUMC",
+    "build:TV3": "tsc && node scripts/dist/build.js --zip --env TV3",
+    "build:VFQ": "tsc && node scripts/dist/build.js --zip --env VFQ",
+    "test": "npx ts-node scripts/src/build.ts --keep true --zip --env test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/yargs": "^17.0.32",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "properties-file": "^3.5.4",
+    "roku-deploy": "^3.12.0",
+    "yargs": "^17.7.2"
+  }
+}
