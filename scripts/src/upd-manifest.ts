@@ -4,34 +4,35 @@ import fs from 'fs';
 import path from 'path';
 import { getProperties } from 'properties-file';
 
-export function updateManifest(): Promise<string | never> {
+type TProperties = {
+  [key: string]: string;
+};
+
+type TMProps = Set<string>;
+
+export function updateManifest(): Promise<string> {
   const updManifest: Promise<string> = new Promise((resolve, reject) => {
     const manifest = getManifestFileName();
     try {
       if (!fs.existsSync(manifest)) {
         throw new Error(`Manifest file '${manifest}' not found`);
       }
-      let props: IProperties = getProperties(fs.readFileSync(manifest));
-      let mProps: Set<string> = prepareNewProperties(props);
+      let props: TProperties = getProperties(fs.readFileSync(manifest));
+      let mProps: TMProps = prepareNewProperties(props);
       fs.writeFileSync(manifest, [...mProps].sort().join('\n'));
       resolve(States.isUpdated);
     } catch (err) {
-      console.log(err);
-      reject(States.isError);
+      reject(err);
     }
   });
   return updManifest;
 }
 
-interface IProperties {
-  [key: string]: string;
-}
-
 const getManifestFileName = (): string => path.join(stagingDir, 'manifest');
 
-const prepareNewProperties = (props: IProperties): Set<string> => {
+const prepareNewProperties = (props: TProperties): TMProps => {
   props = Object.assign(props, { env });
-  let mProps = new Set<string>();
+  let mProps: TMProps = new Set();
   for (const [k, v] of Object.entries(props)) {
     mProps.add(`${k}=${v}`);
   }

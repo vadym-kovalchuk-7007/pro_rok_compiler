@@ -1,5 +1,7 @@
+import { rokuDeploy } from 'roku-deploy';
+import { updateManifest } from './upd-manifest';
 import {
-  States,
+  deleteInstalledChannel,
   files,
   host,
   outDir,
@@ -7,12 +9,12 @@ import {
   password,
   retainStagingFolder,
   stagingDir,
+  States,
 } from './variables';
 
-import { rokuDeploy } from 'roku-deploy';
-import { updateManifest } from './upd-manifest';
+export type TPromise = Promise<States>;
 
-export const prepublishFiles = (): Promise<string | never> =>
+export const prepublishFiles = (): TPromise =>
   rokuDeploy
     .prepublishToStaging({
       stagingDir,
@@ -20,7 +22,7 @@ export const prepublishFiles = (): Promise<string | never> =>
     })
     .then(prepublished, rejected);
 
-export const zipFiles = (): Promise<string | never> =>
+export const zipFiles = (): TPromise =>
   rokuDeploy
     .zipPackage({
       outDir,
@@ -30,25 +32,30 @@ export const zipFiles = (): Promise<string | never> =>
     })
     .then(zipped, rejected);
 
-export const publish = (): Promise<string | never> =>
+export const publish = (): TPromise =>
   rokuDeploy
     .publish({
       host,
       password,
       outDir,
       outFile,
+      deleteInstalledChannel,
     })
     .then(published, rejected);
 
-async function prepublished(): Promise<string> {
+async function prepublished(): TPromise {
   return await updateManifest()
     .then(() => States.isCopied)
-    .catch((err: string) => err);
+    .catch((err) => {
+      console.log(err);
+      return States.isError;
+    });
 }
-const zipped = () => `${outFile} ${States.isZipped}`;
+const zipped = () => States.isZipped;
 
 const published = () => States.isPublished;
 
 const rejected = (error: string) => {
-  throw new Error(error);
+  console.log(error);
+  return States.isError;
 };

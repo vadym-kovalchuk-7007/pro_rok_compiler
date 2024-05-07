@@ -7,6 +7,18 @@ export const args = yargs
     description: 'Environment',
     type: 'string',
   })
+  .option('deleteInstalledChannel', {
+    alias: 'u',
+    default: true,
+    description: 'Uninstall build',
+    type: 'boolean',
+  })
+  .option('install', {
+    alias: 'i',
+    default: false,
+    description: 'Publish to device',
+    type: 'boolean',
+  })
   .option('retainStagingFolder', {
     alias: 'keep',
     default: false,
@@ -21,4 +33,4 @@ export const args = yargs
   })
   .parseSync();
 
-export const { env, retainStagingFolder, zip } = args;
+export const { env, install, retainStagingFolder, zip } = args;
