@@ -1,5 +1,5 @@
 import { rokuDeploy } from 'roku-deploy';
-import { updateManifest } from './upd-manifest';
+import UpdateManifest from './UpdateManifest';
 import {
   deleteInstalledChannel,
   files,
@@ -14,48 +14,51 @@ import {
 
 export type TPromise = Promise<States>;
 
-export const prepublishFiles = (): TPromise =>
-  rokuDeploy
-    .prepublishToStaging({
-      stagingDir,
-      files,
-    })
-    .then(prepublished, rejected);
+export default class Deploy {
+  static prepublishFiles = (): TPromise =>
+    rokuDeploy
+      .prepublishToStaging({
+        files,
+        stagingDir,
+      })
+      .then(this.prepublished, this.rejected);
 
-export const zipFiles = (): TPromise =>
-  rokuDeploy
-    .zipPackage({
-      outDir,
-      outFile,
-      retainStagingFolder,
-      stagingDir,
-    })
-    .then(zipped, rejected);
+  static zipFiles = (): TPromise =>
+    rokuDeploy
+      .zipPackage({
+        outDir,
+        outFile,
+        retainStagingFolder,
+        stagingDir,
+      })
+      .then(this.zipped, this.rejected);
 
-export const publish = (): TPromise =>
-  rokuDeploy
-    .publish({
-      host,
-      password,
-      outDir,
-      outFile,
-      deleteInstalledChannel,
-    })
-    .then(published, rejected);
+  static publish = (): TPromise =>
+    rokuDeploy
+      .publish({
+        deleteInstalledChannel,
+        host,
+        outDir,
+        outFile,
+        password,
+      })
+      .then(this.published, this.rejected);
 
-async function prepublished(): TPromise {
-  return await updateManifest()
-    .then(() => States.isCopied)
-    .catch((err) => {
-      console.log(err);
-      return States.isError;
-    });
+  static prepublished = async (): TPromise => {
+    return await UpdateManifest.update()
+      .then(() => States.isCopied)
+      .catch((err) => {
+        console.log(err);
+        return States.isError;
+      });
+  };
+
+  private static zipped = (): States => States.isZipped;
+
+  private static published = (): States => States.isPublished;
+
+  private static rejected = (error: string): States => {
+    console.log(error);
+    return States.isError;
+  };
 }
-const zipped = () => States.isZipped;
-
-const published = () => States.isPublished;
-
-const rejected = (error: string) => {
-  console.log(error);
-  return States.isError;
-};

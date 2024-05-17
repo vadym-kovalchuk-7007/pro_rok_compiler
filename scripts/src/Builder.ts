@@ -1,4 +1,4 @@
-import { prepublishFiles, publish, TPromise, zipFiles } from './deploy';
+import Deploy, { TPromise } from './Deploy';
 import { install, isStateFailed, outFile, States, zip } from './variables';
 
 export default class Builder {
@@ -17,7 +17,7 @@ export default class Builder {
   };
 
   private static prePublish = async (): TPromise => {
-    let prePublished = (await prepublishFiles()) as States;
+    let prePublished = (await Deploy.prepublishFiles()) as States;
     if (isStateFailed(prePublished)) this.buildFail();
     console.log(prePublished);
     return prePublished;
@@ -26,7 +26,7 @@ export default class Builder {
   private static zipping = async (): TPromise => {
     let zipped = States.isDefault;
     if (zip) {
-      zipped = (await zipFiles()) as States;
+      zipped = (await Deploy.zipFiles()) as States;
       if (isStateFailed(zipped)) this.buildFail();
       console.log(`${outFile}:${zipped}`);
     }
@@ -36,7 +36,7 @@ export default class Builder {
   private static installing = async (): TPromise => {
     let published = States.isDefault;
     if (install) {
-      published = (await publish()) as States;
+      published = (await Deploy.publish()) as States;
       if (isStateFailed(published)) this.buildFail();
       console.log(published);
     }
